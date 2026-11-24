@@ -1,4 +1,4 @@
-name: RPL PRO 8 - Gerar APK
+name: RPL PRO 9 - Gerar APK
 on:
   workflow_dispatch:
   push:
@@ -34,6 +34,14 @@ jobs:
         run: |
           npx cap add android
           npx cap sync android
+          cp native/*.java android/app/src/main/java/br/com/rpl/orcamentos/
+          for d in android/app/src/main/res/mipmap-*; do
+            rm -f "$d/ic_launcher.webp" "$d/ic_launcher_round.webp"
+            cp native/icon.png "$d/ic_launcher.png"
+            cp native/icon.png "$d/ic_launcher_round.png"
+          done
+          rm -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher*.xml
+          sed -i 's/versionCode 1/versionCode 9/;s/versionName "1.0"/versionName "9.0"/' android/app/build.gradle
       - name: Compilar APK
         working-directory: android
         run: |
@@ -42,6 +50,6 @@ jobs:
       - name: Publicar APK
         uses: actions/upload-artifact@v4
         with:
-          name: RPL-Orcamentos-PRO-8-APK
+          name: RPL-Orcamentos-PRO-9-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
