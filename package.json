@@ -1,0 +1,17 @@
+{
+  "name": "rpl-orcamentos-pro",
+  "version": "8.0.0",
+  "private": true,
+  "scripts": {
+    "android:init": "npx cap add android",
+    "android:sync": "npx cap sync android"
+  },
+  "dependencies": {
+    "@capacitor/android": "7.4.0",
+    "@capacitor/core": "7.4.0",
+    "@capacitor/cli": "7.4.0",
+    "jspdf": "3.0.3",
+    "@capacitor/filesystem": "7.1.4",
+    "@capacitor/share": "7.0.2"
+  }
+}

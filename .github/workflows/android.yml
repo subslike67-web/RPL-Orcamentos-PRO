@@ -1,0 +1,47 @@
+name: RPL PRO 8 - Gerar APK
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, principal]
+    paths:
+      - '**'
+permissions:
+  contents: read
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verificar projeto
+        run: |
+          test -f package.json
+          test -f www/index.html
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Dependencias e PDF offline
+        working-directory: .
+        run: |
+          npm install --no-audit --no-fund
+          cp node_modules/jspdf/dist/jspdf.umd.min.js www/jspdf.umd.min.js
+      - name: Preparar Android
+        working-directory: .
+        run: |
+          npx cap add android
+          npx cap sync android
+      - name: Compilar APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon assembleDebug
+      - name: Publicar APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: RPL-Orcamentos-PRO-8-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
